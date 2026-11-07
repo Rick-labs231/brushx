@@ -1,0 +1,36 @@
+{
+  "name": "brushx",
+  "private": true,
+  "version": "0.10.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "test": "node --experimental-strip-types --test tests/engine.test.ts tests/cloud.test.ts tests/media.test.ts tests/tools.test.ts",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "@capacitor/core": "^7.4.0",
+    "@capacitor/filesystem": "^7.1.0",
+    "@capacitor/share": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2",
+    "@capacitor/cli": "^7.4.0",
+    "@capacitor/android": "^7.4.0",
+    "@capacitor/assets": "^3.0.5"
+  }
+}

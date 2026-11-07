@@ -1,0 +1,49 @@
+name: Publish website and web app
+
+# Publishes site/ at the root and the Brush X web app under /app/ on GitHub Pages.
+# One-time setup: repo Settings > Pages > Source: "GitHub Actions".
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**', 'src/**', 'public/**', 'index.html', 'package.json']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      - name: Assemble the site
+        run: |
+          mkdir -p _site/app
+          cp -r site/* _site/
+          cp -r dist/* _site/app/
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,75 @@
+name: Build Android test APK
+
+# Run it from the Actions tab ("Run workflow") or by pushing a tag like v0.9.0.
+# The APK appears under "Artifacts" on the finished run.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Check the code
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: Build the web app
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Create the Android project (first time only)
+        run: |
+          if [ ! -d android ]; then npx cap add android; fi
+
+      - name: App icon and splash screen
+        run: npx @capacitor/assets generate --android --assetPath assets
+
+      - name: Copy the web app into Android
+        run: npx cap sync android
+
+      - name: Build the debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Name the file
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk brushx-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brushx-debug-apk
+          path: brushx-debug.apk
+          if-no-files-found: error
+
+      # Pushing a tag (for example v0.10.0) also publishes a public download page for testers.
+      - name: Publish a release with the APK
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: brushx-debug.apk
+          generate_release_notes: true
+          prerelease: false
+

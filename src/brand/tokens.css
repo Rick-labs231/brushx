@@ -1,0 +1,50 @@
+/* Brush X — Brand Bible tokens (v0.3 §11). Dark is the signature look. */
+:root {
+  --bg: #080a0f;
+  --surface: #10131a;
+  --elevated: #171b24;
+  --border: #232937;
+  --border-strong: #2f3748;
+  --blue: #168cff;
+  --purple: #9b5cff;
+  --highlight: #6db8ff;
+  --text: #f5f7fa;
+  --text-2: #a8afbc;
+  --text-3: #6f7785;
+  --success: #36d399;
+  --warning: #f5b942;
+  --error: #ff5c6c;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-card: 16px;
+  --r-modal: 18px;
+  --r-pill: 999px;
+
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+
+  --t-fast: 120ms;
+  --t-panel: 180ms;
+  --t-modal: 200ms;
+  --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--blue);
+
+  font-family: Inter, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+
+:root[data-contrast='high'] {
+  --bg: #000;
+  --surface: #0a0c10;
+  --elevated: #12151b;
+  --border: #5a6376;
+  --border-strong: #8d97ab;
+  --text-2: #dfe4ee;
+  --text-3: #b3bccd;
+  --highlight: #9fd0ff;
+}
