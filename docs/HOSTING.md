@@ -26,14 +26,14 @@ Nothing in this guide has been run against your real GitHub yet, so if a button 
 
 ## Part 3: Build the Android APK
 1. Repo → **Actions → Android APK → Run workflow**. It takes about 5–10 minutes.
-2. When finished, open the run. At the bottom, under **Artifacts**, is `brushx-debug-apk`. Download it: it is a zip containing `brushx-debug.apk`. This is how you get the APK yourself.
+2. When finished, open the run. At the bottom, under **Artifacts**, is `brushx-apk`. Download it: it is a zip containing `brushx.apk`. This is how you get the APK yourself.
 
 ## Part 4: Make a permanent download link (what the website button uses)
 1. Repo → **Releases → Draft a new release → Choose a tag**, type `v0.10.1`, **Create new tag**, then **Publish release**.
-   (Or on a computer: `git tag v0.10.1 && git push origin v0.10.1`.) Pushing a `v*` tag runs the APK workflow and attaches `brushx-debug.apk` to the release automatically.
-2. Wait for the workflow to finish, then open the Releases page. `brushx-debug.apk` should be listed under Assets.
+   (Or on a computer: `git tag v0.10.1 && git push origin v0.10.1`.) Pushing a `v*` tag runs the APK workflow and attaches `brushx.apk` to the release automatically.
+2. Wait for the workflow to finish, then open the Releases page. `brushx.apk` should be listed under Assets.
 3. The link that always points to the newest APK is:
-   `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx-debug.apk`
+   `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx.apk`
    (The workflow publishes it as a normal release so "latest" works.)
 4. For each new version later: bump the version, push a new tag (`v0.10.2`). The same link then gives the new APK.
 
@@ -47,7 +47,7 @@ Every button marked `data-link="download"` takes its address from `LINKS.downloa
 ## Links to give me (I will fill them in for you)
 | What | Example | Needed for |
 |---|---|---|
-| APK link | `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx-debug.apk` (assumes the repo is `brushx`) | Download button |
+| APK link | `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx.apk` (assumes the repo is `brushx`) | Download button |
 | Web app link | `https://rick-labs231.github.io/brushx/app/` | "Open in browser" |
 | Ricknova website link | e.g. `https://rick-labs231.github.io/` | Brush X site → Ricknova |
 | Brush X website link | `https://rick-labs231.github.io/brushx/` | Ricknova site → Brush X |
@@ -59,7 +59,7 @@ Every button marked `data-link="download"` takes its address from `LINKS.downloa
 Best method: **post the link, not the file.**
 1. Open your WhatsApp channel → write a post with a short message plus the link, e.g. your Brush X website link (it has the Download button, the guide and the install steps) or the direct APK link.
 2. Use this wording: "Brush X test build is out. Download, tap the file, allow install from this source if asked. If you have an older build, uninstall it first."
-Sending the file itself: download `brushx-debug.apk` from the release (phone: Releases → Assets → tap it). WhatsApp often blocks or renames `.apk` files, so if it refuses, put the APK in a zip or just share the link.
+Sending the file itself: download `brushx.apk` from the release (phone: Releases → Assets → tap it). WhatsApp often blocks or renames `.apk` files, so if it refuses, put the APK in a zip or just share the link.
 
 ## What testers will see
 - Android asks to allow installs from the browser/WhatsApp: allow it for that one install.

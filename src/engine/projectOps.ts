@@ -258,9 +258,15 @@ export function stampGuide(p: Project, frameId: string, name: string, strokes: S
   return { project: appendStrokes(base.project, frameId, base.layerId, strokes), layerId: base.layerId }
 }
 
-/** Inserts one new frame per entry after `afterFrameId`, each carrying its strokes on one new guide layer. */
-export function insertGuideFrames(p: Project, afterFrameId: string, name: string, perFrame: Stroke[][]): { project: Project; layerId: string; frameIds: string[] } {
-  const { project: withLayer, layerId } = addGuideLayer(p, name)
+/**
+ * Inserts one new frame per entry after `afterFrameId`, each carrying its strokes on one new layer.
+ * By default the layer is a guide (visible while drawing, never exported). With `asGuide` false it is an
+ * ordinary layer, so the inserted lines are real artwork and are exported.
+ */
+export function insertGuideFrames(p: Project, afterFrameId: string, name: string, perFrame: Stroke[][], asGuide = true): { project: Project; layerId: string; frameIds: string[] } {
+  const { project: withLayer, layerId } = asGuide
+    ? addGuideLayer(p, name)
+    : (() => { const l = createLayer(name); return { project: touch({ ...p, layers: [...p.layers, l] }), layerId: l.id } })()
   const frames = perFrame.map((strokes) => ({ ...createFrame(), cels: { [layerId]: [...strokes] } }))
   const at = Math.max(0, withLayer.frames.findIndex((f) => f.id === afterFrameId)) + 1
   const all = [...withLayer.frames.slice(0, at), ...frames, ...withLayer.frames.slice(at)]

@@ -70,6 +70,7 @@ export function LayersPanel() {
       {active && (
         <>
           <SliderRow label="Opacity" value={active.opacity} min={0} max={1} step={0.05} format={(v) => `${Math.round(v * 100)}%`} onChange={(v) => patchLayerAction(active.id, { opacity: v })} />
+          <label className="row" style={{ marginBottom: '.4rem' }}><input type="checkbox" checked={!active.guide} onChange={(e) => patchLayerAction(active.id, { guide: !e.target.checked }, true)} />Include this layer in exports{active.guide ? ' (currently a guide)' : ''}</label>
           <div className="layer-actions">
             <button className="icon-btn" title="Add layer" aria-label="Add layer" onClick={addLayerAction}><Icon name="plus" /></button>
             <button className="icon-btn" title="Duplicate layer" aria-label="Duplicate layer" onClick={() => duplicateLayerAction(active.id)}><Icon name="copy" /></button>

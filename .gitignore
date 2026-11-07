@@ -30,3 +30,8 @@ android/.gradle
 android/build
 dist
 .env
+
+# signing keys must never be committed
+*.jks
+*.keystore
+keystore.b64

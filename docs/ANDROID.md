@@ -10,8 +10,8 @@ Android Studio is to let GitHub build it for you.
 ## Option A: GitHub builds the APK (no installs)
 
 1. Put the project in a GitHub repo (for example `Rick-labs231/brushx`) and push it.
-2. Open the repo on GitHub, go to **Actions**, pick **Build Android test APK**, press **Run workflow**.
-3. Wait about 10 minutes. When it finishes, open the run and download **brushx-debug-apk** from *Artifacts* (a zip with `app-debug.apk`).
+2. Open the repo on GitHub, go to **Actions**, pick **Build Android APK**, press **Run workflow**.
+3. Wait about 10 minutes. When it finishes, open the run and download **brushx-apk** from *Artifacts* (a zip with `app-debug.apk`).
 4. Send `app-debug.apk` to your phone (WhatsApp, Drive, USB). Open it and allow *Install unknown apps* when Android asks.
 5. Testers install the same file. A debug APK is fine for testing, but it can't be uploaded to the Play Store.
 

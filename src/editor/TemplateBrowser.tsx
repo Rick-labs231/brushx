@@ -83,8 +83,9 @@ export function TemplateBrowser() {
                 {[...new Set([...FRAME_CHOICES, cycle.defaultFrames])].sort((a, b) => a - b).map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </label>
-            <button className="btn primary sm" style={{ marginTop: '.5rem', width: '100%' }} onClick={() => insertCycleAction(cycle.id, frames)}>Insert {frames} frames</button>
-            <p className="hint" style={{ marginTop: '.4rem' }}>Adds frames after the current one with a guide layer you can draw over. Guides never export.</p>
+            <button className="btn primary sm" style={{ marginTop: '.5rem', width: '100%' }} onClick={() => insertCycleAction(cycle.id, frames, false)} title="Adds the frames as real lines that are exported">Insert {frames} frames as drawing (exported)</button>
+            <button className="btn secondary sm" style={{ marginTop: '.4rem', width: '100%' }} onClick={() => insertCycleAction(cycle.id, frames, true)} title="Adds the frames as a guide to draw over; never exported">Insert {frames} frames as guide (not exported)</button>
+            <p className="hint" style={{ marginTop: '.4rem' }}>Adds frames after the current one. A drawing is part of your animation; a guide is only there to draw over and never exports.</p>
           </div>
         </div>
       )}

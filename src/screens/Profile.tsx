@@ -5,6 +5,7 @@ import { useApp } from '../state/app.ts'
 import { SliderRow, Toggle } from '../ui/Controls.tsx'
 import { Icon } from '../ui/Icon.tsx'
 import { CloudCard } from './CloudCard.tsx'
+import { UpdateCard } from './UpdateCard.tsx'
 import { Shell } from './Shell.tsx'
 
 /** A guide belongs to its screen, so go there first. */
@@ -38,6 +39,7 @@ export function Profile() {
           </div>
           <p className="faint">The editor guide starts from the ? button at the top of the editor. <button className="btn ghost sm" onClick={turnOnTours}>Show guides on every screen again</button></p>
         </div></section>
+        <UpdateCard />
         <CloudCard />
         <section className="card"><div className="body" style={{ padding: '1rem' }}>
           <h2>This device</h2>

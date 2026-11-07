@@ -680,6 +680,17 @@ describe('guide layers and cycle insertion', () => {
     assert.ok(strokes.every((s) => s.tool === 'line' && s.points.length >= 2 && s.size === 2))
     assert.equal(new Set(strokes.map((s) => s.id)).size, strokes.length)
   })
+  it('inserts a cycle as an ordinary exported layer when asGuide is false', () => {
+    const p = frames5()
+    const walk = CYCLES.find((c) => c.id === 'walk')!
+    const map = guideMapper(unitGuide, p.width, p.height)
+    const per = Array.from({ length: 4 }, (_, i) => shapesToStrokes(walk.frame(i, 4), map, { size: 2 }))
+    const r = insertGuideFrames(p, p.frames[0].id, 'Walk', per, false)
+    const layer = r.project.layers.find((l) => l.id === r.layerId)!
+    assert.ok(!layer.guide)
+    assert.equal(r.project.frames.length, 9)
+    assert.ok(celOf(r.project.frames[1], layer.id).length > 0)
+  })
   it('inserts N frames after the current one on a new guide layer', () => {
     let p = frames5() // 5 frames
     const after = p.frames[1].id

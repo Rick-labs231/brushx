@@ -266,3 +266,10 @@ input[type=range]{width:100%;accent-color:var(--blue);height:1.25rem;margin:0}
   .ed-top .name { min-width: 0; }
   .ed-top .chip { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 5rem; }
 }
+
+/* ---- update banner */
+.update-banner{position:fixed;z-index:60;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top, 0px) + .5rem);width:min(34rem,calc(100vw - 1rem));display:grid;gap:.6rem;padding:.8rem .9rem;border-radius:16px;background:var(--surface,#10131A);border:1px solid rgba(22,140,255,.55);box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.update-banner strong{display:block}
+.update-banner span,.update-banner small{display:block;color:var(--muted,#9AA5BA);font-size:.85rem;line-height:1.4}
+.update-banner small{font-size:.76rem;opacity:.85;margin-top:.2rem}
+.update-banner .row{justify-content:flex-end}

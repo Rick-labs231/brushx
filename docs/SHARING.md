@@ -19,9 +19,9 @@ Everything below happens on GitHub; you don't install Android Studio.
 ## 2. Build the APK
 
 1. In the repo open **Actions**. If GitHub asks, press **I understand my workflows, enable them**.
-2. Pick **Build Android test APK** on the left, press **Run workflow** (green button), then **Run workflow** again.
+2. Pick **Build Android APK** on the left, press **Run workflow** (green button), then **Run workflow** again.
 3. Wait about 10 minutes. A green tick means it worked.
-4. Open the run, scroll to **Artifacts**, and download **brushx-debug-apk**. Unzip it: inside is `brushx-debug.apk`.
+4. Open the run, scroll to **Artifacts**, and download **brushx-apk**. Unzip it: inside is `brushx.apk`.
 
 ## 3. Make a download link for testers (recommended)
 
@@ -29,9 +29,9 @@ Pushing a version tag makes GitHub build the APK **and** publish it on a public 
 
 1. In the repo press **Releases > Create a new release**.
 2. Press **Choose a tag**, type `v0.10.0`, press **Create new tag**, then **Publish release**.
-3. Wait for the Actions run to finish (about 10 minutes). The release now shows `brushx-debug.apk`.
+3. Wait for the Actions run to finish (about 10 minutes). The release now shows `brushx.apk`.
 4. The permanent link to the newest APK is:
-   `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx-debug.apk`
+   `https://github.com/Rick-labs231/brushx/releases/latest/download/brushx.apk`
    Send that link (WhatsApp, Telegram, Twitter, your website). Tapping it on a phone downloads the app.
    (The workflow publishes a normal release, so "latest" works. If it ever shows nothing, check the release is not marked "pre-release".)
 
@@ -39,7 +39,7 @@ Each new version: bump the number (v0.10.1, v0.11.0…) and publish a new releas
 
 ## 4. How testers install it
 
-1. Open the link on an Android phone and download `brushx-debug.apk`.
+1. Open the link on an Android phone and download `brushx.apk`.
 2. Open the file. Android says it blocks unknown apps: tap **Settings**, allow your browser or Files app to install apps, go back, tap **Install**.
 3. If Play Protect says "unrecognised app", tap **More details > Install anyway**. This is normal for apps outside the Play Store.
 4. Updating: **uninstall the old version first.** Debug builds are signed with a new key every build, so Android refuses to

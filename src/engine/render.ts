@@ -289,7 +289,7 @@ export function getCel(strokes: Stroke[], w: number, h: number): HTMLCanvasEleme
 const flatCache = new Map<string, { frame: Frame; key: string; canvas: HTMLCanvasElement }>()
 
 function layersKey(project: Project) {
-  return `${project.width}x${project.height}|${project.layers.map((l) => `${l.id}:${l.visible ? 1 : 0}:${l.opacity}:${l.base?.[0]?.id ?? ''}`).join(',')}`
+  return `${project.width}x${project.height}|${project.layers.map((l) => `${l.id}:${l.visible ? 1 : 0}:${l.guide ? 1 : 0}:${l.opacity}:${l.base?.[0]?.id ?? ''}`).join(',')}`
 }
 
 /** All visible layers of a frame flattened onto a transparent canvas. */

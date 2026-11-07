@@ -662,18 +662,19 @@ export function pasteGuideAction() {
 }
 
 /** "Run → 8 frames": adds N frames after the current one, each with its construction guides. */
-export function insertCycleAction(cycleId: string, frames: number) {
+export function insertCycleAction(cycleId: string, frames: number, asGuide = true) {
   const s = get()
   const cycle = cycleById(cycleId)
   if (!s.project || !cycle) return
   const n = Math.max(2, Math.min(24, Math.round(frames)))
   const { width: w, height: h } = s.project
   const map = guideMapper({ x: 0, y: 0, scale: 1, stretchX: 1, rotation: 0, flipX: false }, w, h)
-  const per = Array.from({ length: n }, (_, i) => shapesToStrokes(cycle.frame(i, n), map, { size: guideLineSize(w, h), opacity: 0.7, color: GUIDE_COLOR }))
-  const r = insertGuideFrames(s.project, s.frameId, `Guide · ${cycle.title}`, per)
+  const style = asGuide ? { size: guideLineSize(w, h), opacity: 0.7, color: GUIDE_COLOR } : { size: guideLineSize(w, h), opacity: 1, color: s.color }
+  const per = Array.from({ length: n }, (_, i) => shapesToStrokes(cycle.frame(i, n), map, style))
+  const r = insertGuideFrames(s.project, s.frameId, asGuide ? `Guide · ${cycle.title}` : cycle.title, per, asGuide)
   commit(r.project)
-  set({ frameId: r.frameIds[0], layerId: s.layerId, selection: null, playing: false })
-  toast(`${cycle.title}: ${n} frames added. Draw on your own layer over the guide.`, 'success')
+  set({ frameId: r.frameIds[0], layerId: asGuide ? s.layerId : r.layerId, selection: null, playing: false })
+  toast(asGuide ? `${cycle.title}: ${n} frames added as a guide. Draw on your own layer over it. Guides never export.` : `${cycle.title}: ${n} frames added as a drawing. It will be in your exports.`, 'success')
 }
 
 export function toggleFavorite(id: string) {

@@ -17,6 +17,8 @@ import { saveNow, startAutosave } from './state/persist.ts'
 import { navigate, parseHash, useRoute } from './state/router.ts'
 import { installShortcuts } from './state/shortcuts.ts'
 import { ToastHost } from './ui/Controls.tsx'
+import { UpdateBanner } from './ui/UpdateBanner.tsx'
+import { checkForUpdates } from './state/update.ts'
 
 function EditorRoute({ id }: { id: string }) {
   const openId = useApp((s) => s.project?.id)
@@ -46,7 +48,8 @@ export default function App() {
     void refreshLibrary()
     startCloud()
     const t = window.setTimeout(() => setSplash(false), 1000)
-    return () => { stopSave(); stopKeys(); window.clearTimeout(t) }
+    const u = window.setTimeout(() => { void checkForUpdates() }, 4000)
+    return () => { stopSave(); stopKeys(); window.clearTimeout(t); window.clearTimeout(u) }
   }, [])
 
   useEffect(() => {
@@ -81,6 +84,7 @@ export default function App() {
       {dialog === 'project' && <ProjectDialog />}
       {dialog === 'versions' && <VersionsDialog />}
       <ToastHost />
+      <UpdateBanner />
       <TourHost />
       {splash && (
         <div className="splash" aria-hidden="true">
