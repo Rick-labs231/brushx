@@ -5,6 +5,7 @@ import { Dialog } from '../ui/Controls.tsx'
 import { ALL_TOOLS, SHORTCUTS, hasCustomKeys, keyOf, onKeysChanged, resetKeys, setToolKey } from './tools.ts'
 import type { ToolId } from '../engine/types.ts'
 import { hasCustomRange, playSequence } from '../engine/projectOps.ts'
+import { loadKind, loadVideoFormat, loadWatermark, saveKind, saveVideoFormat, saveWatermark, type ExportKind } from '../state/exportPrefs.ts'
 import { GIF_MEMORY_LIMIT_MB, exportGif, exportPngSequence, exportVideo, gifMemoryMB, planVideo, videoSupported } from '../state/exporters.ts'
 import { VIDEO_PRESETS, presetById, type VideoFormat, type VideoQuality } from '../engine/video.ts'
 
@@ -61,11 +62,13 @@ export function NewProjectDialog() {
   )
 }
 
-type ExportKind = 'png' | 'gif' | 'seq' | 'video'
 
 export function ExportDialog() {
   const project = useApp((s) => s.project)
-  const [kind, setKind] = useState<ExportKind>('png')
+  const [kind, setKindState] = useState<ExportKind>(() => loadKind(project?.frames.length ?? 1))
+  const setKind = (k: ExportKind) => { setKindState(k); saveKind(k) }
+  const [watermark, setWatermarkState] = useState(loadWatermark)
+  const setWatermark = (on: boolean) => { setWatermarkState(on); saveWatermark(on) }
   const [scale, setScale] = useState(1)
   const [transparent, setTransparent] = useState(false)
   const [useRange, setUseRange] = useState(() => !!project && hasCustomRange(project))
@@ -73,7 +76,8 @@ export function ExportDialog() {
   const [loop, setLoop] = useState(true)
   const [busy, setBusy] = useState<null | { done: number; total: number }>(null)
   const [error, setError] = useState('')
-  const [vFormat, setVFormat] = useState<VideoFormat>('mp4')
+  const [vFormat, setVFormatState] = useState<VideoFormat>(loadVideoFormat)
+  const setVFormat = (f: VideoFormat) => { setVFormatState(f); saveVideoFormat(f) }
   const [preset, setPreset] = useState('project')
   const [vFps, setVFps] = useState(project?.fps ?? 12)
   const [quality, setQuality] = useState<VideoQuality>('medium')
@@ -92,8 +96,8 @@ export function ExportDialog() {
     setBusy({ done: 0, total: kind === 'video' ? plan!.frames : seq.length })
     const o = { scale, transparent, useRange: rangeOn, expandHolds: expand, loop, onProgress: (done: number, total: number) => setBusy({ done, total }) }
     try {
-      if (kind === 'video') await exportVideo({ format: vFormat, presetId: preset, scale, fps: vFps, quality, useRange: rangeOn, includeSound: withSound, onProgress: o.onProgress })
-      else if (kind === 'gif') await exportGif(o)
+      if (kind === 'video') await exportVideo({ format: vFormat, presetId: preset, scale, fps: vFps, quality, useRange: rangeOn, includeSound: withSound, watermark, onProgress: o.onProgress })
+      else if (kind === 'gif') await exportGif({ ...o, watermark })
       else await exportPngSequence(o)
     } catch {
       setError('Export failed. Try a smaller size or fewer frames.')
@@ -105,10 +109,10 @@ export function ExportDialog() {
     <Dialog title="Export" onClose={() => !busy && openDialog(null)} footer={<button className="btn ghost" disabled={!!busy} onClick={() => openDialog(null)}>Done</button>}>
       <div className="field"><span className="label">Format</span>
         <div className="seg" role="group" aria-label="Format">
-          <button aria-pressed={kind === 'png'} onClick={() => setKind('png')}>PNG frame</button>
+          <button aria-pressed={kind === 'video'} onClick={() => setKind('video')}>Video</button>
           <button aria-pressed={kind === 'gif'} onClick={() => setKind('gif')}>GIF</button>
           <button aria-pressed={kind === 'seq'} onClick={() => setKind('seq')}>PNG sequence</button>
-          <button aria-pressed={kind === 'video'} onClick={() => setKind('video')}>Video</button>
+          <button aria-pressed={kind === 'png'} onClick={() => setKind('png')}>PNG frame</button>
         </div>
       </div>
       {kind === 'video' && (
@@ -149,6 +153,7 @@ export function ExportDialog() {
             </div>
             {!custom && <span className="hint">Set In / Out on the timeline to export just part of the animation.</span>}
           </div>
+          {(kind === 'gif' || kind === 'video') && <label className="row"><input type="checkbox" checked={watermark} onChange={(e) => setWatermark(e.target.checked)} />Add small Brush X watermark</label>}
           {kind === 'gif' && <label className="row"><input type="checkbox" checked={loop} onChange={(e) => setLoop(e.target.checked)} />Loop forever</label>}
           {kind === 'seq' && <label className="row"><input type="checkbox" checked={expand} onChange={(e) => setExpand(e.target.checked)} />One image per tick (keeps held frames’ timing)</label>}
           {kind === 'gif' && <span className="hint">GIFs use 256 colours, so gradients may band. Held frames become longer delays.</span>}

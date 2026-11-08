@@ -29,6 +29,8 @@ npm run build
 | 7.7 Guided tour and website | interactive first-run guide for Home, Projects, Profile and the editor (Next/Back/Skip, replay from ? and Profile), X app icon, showcase website in `site/` with Ricknova section, sharing guide (docs/SHARING.md), GitHub Pages workflow | done; **workflows never run** |
 | 7.8 Tester fixes (0.10.2) | motion cycles can be inserted as an exported drawing or as a guide; per-layer "Include this layer in exports" switch; fixed a stale-frame cache that ignored guide on/off | done; 159 unit tests, browser suites pass |
 | 7.9 Signed releases and update notice (0.10.3) | workflow builds a signed release APK from GitHub secrets (docs/SIGNING.md) with a rising versionCode; the installed app checks the latest GitHub release and shows a Download banner, plus Profile > Version > Check for updates | done; **never run on real GitHub/Android** |
+| 7.10 Export defaults and watermark (0.10.4) | export opens on Video for animations (PNG for a single drawing) and remembers the last motion format; small optional "Brush X" watermark on video and GIF exports (on by default, switch in the export dialog) | done; 168 unit tests, browser suites pass |
+| 7.11 Phone layout and custom toolbar (0.10.5) | cleaner phone top bar (project name gets the room, save state is a dot, guide/settings/save/hide under ⋯ More); toolbar shows popular tools only, with a + button to add or remove any tool, reset, or show all; shortcuts still work for hidden tools; beginner guide updated | done; browser suites pass (tour 26, toolbar new) |
 | 8+ | community, marketplace, AI | deferred until after the Play Store upload |
 
 Everything from Phase 1 is now built.

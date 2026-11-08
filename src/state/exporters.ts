@@ -1,6 +1,7 @@
 import { encodeGif, type GifFrame } from '../engine/gif.ts'
 import { holdOf, playSequence, totalTicks } from '../engine/projectOps.ts'
 import { renderFinalFrame } from '../engine/render.ts'
+import { drawWatermark } from '../engine/watermark.ts'
 import type { Project } from '../engine/types.ts'
 import { zipBytes, type ZipEntry } from '../engine/zip.ts'
 import { muxMp4, type Mp4Audio, type Mp4Sample } from '../engine/mp4.ts'
@@ -20,6 +21,8 @@ export interface AnimExportOptions {
   /** PNG sequence: write one file per tick so held frames keep their timing */
   expandHolds?: boolean
   loop?: boolean
+  /** stamp the small Brush X mark in the corner (GIF) */
+  watermark?: boolean
   onProgress?: (done: number, total: number) => void
 }
 
@@ -55,6 +58,7 @@ export async function exportGif(o: AnimExportOptions): Promise<void> {
   for (let i = 0; i < seq.length; i += 1) {
     const canvas = renderFinalFrame(p, p.frames[seq[i].index], { scale: o.scale, transparent: o.transparent })
     const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D
+    if (o.watermark) drawWatermark(ctx, w, h)
     frames.push({ data: ctx.getImageData(0, 0, w, h).data, delay: (100 * seq[i].ticks) / p.fps })
     o.onProgress?.(i + 1, seq.length)
     await tick()
@@ -98,6 +102,8 @@ export interface VideoExportOptions {
   useRange: boolean
   /** mix the project's sound in (default true) */
   includeSound?: boolean
+  /** stamp the small Brush X mark in the corner */
+  watermark?: boolean
   onProgress?: (done: number, total: number) => void
 }
 
@@ -244,6 +250,7 @@ export async function exportVideo(o: VideoExportOptions): Promise<void> {
       ctx.fillStyle = p.background ?? '#ffffff'
       ctx.fillRect(0, 0, plan.width, plan.height)
       ctx.drawImage(art, fit.x, fit.y, fit.w, fit.h)
+      if (o.watermark) drawWatermark(ctx, plan.width, plan.height)
     }
     const frame = new VideoFrame(out, { timestamp: Math.round((k * 1e6) / plan.fps), duration: Math.round(1e6 / plan.fps) })
     encoder.encode(frame, { keyFrame: k % keyEvery === 0 })

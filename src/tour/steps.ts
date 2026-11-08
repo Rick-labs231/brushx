@@ -54,11 +54,10 @@ export const TOURS: Record<TourId, { label: string; steps: Step[] }> = {
     steps: [
       { title: 'The editor', body: 'This is where you draw and animate. The guide takes about two minutes and covers every part. Use Next, or the arrow keys. Skip is always available.' },
       { title: 'The canvas', target: '.stage', body: 'Draw with a mouse, a pen or your finger. Pen pressure is supported. Two fingers (or Space + drag) pan, and pinch or scroll zooms.', tryIt: 'Try scribbling something now. Undo is Ctrl+Z.' },
-      { title: 'Drawing tools', target: tool('Pencil'), body: 'Pencil, Ink pen, Brush, Airbrush, Marker, Chalk, Crayon and Eraser each feel different. Hover over any tool to see its shortcut key.' },
+      { title: 'Drawing tools', target: tool('Pencil'), body: 'The toolbar starts with the popular tools: Pencil, Brush and Eraser. Each feels different, and the Eraser rubs out mistakes. Hover over any tool to see its shortcut key.' },
       { title: 'Fill and Eyedropper', target: tool('Fill bucket'), body: 'Fill pours colour into a closed area (it respects gaps). The Eyedropper picks up a colour from the canvas.' },
-      { title: 'Shapes and the Curve pen', target: tool('Curve pen'), body: 'Line, Rectangle, Ellipse and Polygon draw clean shapes. The Curve pen makes smooth curves: click to place a point, drag to bend, click the first point to close, Enter to finish.' },
-      { title: 'Text and Crop', target: tool('Text'), body: 'Text puts words on the canvas as a movable picture. Crop (right below) trims the canvas to just the part you want. Nothing is deleted, so you can make it bigger again.' },
-      { title: 'Select, Lasso and Hand', target: tool('Select'), body: 'Select drags a box around strokes to move them. Lasso draws a loop around them. Copy, cut and paste work across frames and even projects. Hand moves the canvas.' },
+      { title: 'Add more tools', target: tool('Add or remove tools'), body: 'Tap + to see every tool with a short description, then tick the ones you want on the toolbar: Ink pen, Airbrush, Marker, Chalk, Crayon, Lasso, Line, Rectangle, Ellipse, Polygon, Curve pen, Text and Crop. Untick the ones you do not use to make more room to draw.', tryIt: 'Tap + now to have a look. Back to popular tools resets everything.' },
+      { title: 'Select and Hand', target: tool('Select'), body: 'Select drags a box around strokes to move them (Lasso, in the + list, draws a loop instead). Copy, cut and paste work across frames and even projects. Hand moves the canvas.' },
       { title: 'Mirror drawing', target: tool('Symmetry'), body: 'Switch on symmetry (X) and everything you draw is mirrored. Great for faces, wings and logos.' },
       { title: 'Brush settings and colours', tab: 'Properties', panel: true, target: '.side-body', body: 'Size, opacity, hardness and smoothing live here, with a colour wheel and palette. Save a favourite brush as a preset under “My brush presets”.' },
       { title: 'Layers', tab: 'Layers', panel: true, target: '.side-body', body: 'Stack drawings like sheets of paper. Hide, lock, rename, reorder, change opacity, duplicate or merge them. Put the lineart on its own layer and colour underneath.' },
@@ -72,7 +71,7 @@ export const TOURS: Record<TourId, { label: string; steps: Step[] }> = {
       { title: 'View controls', target: '.stage-ctl', body: 'Zoom, rotate the canvas like paper, and Fit to see the whole thing. F fits the view.' },
       { title: 'Undo, save and settings', target: '.ed-top', body: 'Undo and Redo are always here. Everything autosaves. Project settings has size, “Save a copy” and version history with restore points, so you can go back in time.' },
       { title: 'Export', target: '.ed-top .btn.primary', body: 'Share as a PNG, GIF, PNG sequence, a project file, or a video (MP4 or WebM) with presets for YouTube, TikTok, Instagram and X. Sound is included.' },
-      { title: 'You are ready', body: 'Press ? any time for shortcuts. The ? button next to the project name replays this guide. Have fun making something great.' },
+      { title: 'You are ready', body: 'Press ? any time for shortcuts. You can replay this guide from the ? button at the top (under More on a phone). Have fun making something great.' },
     ],
   },
 }

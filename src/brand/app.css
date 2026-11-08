@@ -273,3 +273,28 @@ input[type=range]{width:100%;accent-color:var(--blue);height:1.25rem;margin:0}
 .update-banner span,.update-banner small{display:block;color:var(--muted,#9AA5BA);font-size:.85rem;line-height:1.4}
 .update-banner small{font-size:.76rem;opacity:.85;margin-top:.2rem}
 .update-banner .row{justify-content:flex-end}
+
+/* ---- customizable toolbar */
+.toolbar .add-tools{border:1px dashed var(--border-strong);color:var(--text-2);background:transparent}
+.toolbar .add-tools:hover{color:var(--text);border-color:var(--blue)}
+.tool-list{display:grid;gap:.9rem;max-height:56dvh;overflow:auto;padding-right:.2rem}
+.tool-list h3{margin:0 0 .3rem;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint,#8b94a7)}
+.tool-row{display:grid;grid-template-columns:2.4rem 1fr auto;gap:.7rem;align-items:center;padding:.45rem .5rem;border-radius:var(--r-sm);cursor:pointer}
+.tool-row:hover{background:var(--surface)}
+.tool-ico{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:10px;background:var(--surface);border:1px solid var(--border)}
+.tool-txt{display:grid;gap:.1rem;min-width:0}
+.tool-txt strong small{font-weight:500;color:var(--faint,#8b94a7);margin-left:.25rem}
+.tool-txt span{font-size:.82rem;color:var(--muted,#9AA5BA)}
+.tool-row input{width:1.3rem;height:1.3rem;accent-color:var(--blue)}
+
+/* ---- phone top bar: the name gets the room, save state shrinks to a dot, rest lives under More */
+@media (max-width:760px){
+  .ed-top{overflow:visible;position:relative;z-index:35}
+  .ed-top .name{flex:1 1 auto;width:auto;min-width:0;text-overflow:ellipsis}
+  .ed-top .grow{display:none}
+  .ed-top .chip{font-size:0;width:.65rem;height:.65rem;min-width:.65rem;padding:0;border-radius:50%;background:currentColor;border:0;flex:none;max-width:none}
+  .ed-top .chip.ok{background:var(--success)}.ed-top .chip.warn{background:var(--warning)}.ed-top .chip.err{background:var(--error)}
+  .ed-top .menu{min-width:14rem}
+  /* typing a name: it takes the whole bar so you see all of it */
+  .ed-top:has(.name:focus) > *:not(.name){display:none!important}
+}
