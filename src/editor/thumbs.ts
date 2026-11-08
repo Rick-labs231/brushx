@@ -1,13 +1,14 @@
 import { celOf } from '../engine/projectOps.ts'
-import { getCel, renderFinalFrame } from '../engine/render.ts'
-import type { Frame, Layer, Project } from '../engine/types.ts'
+import { frameLayersKey, getCel, renderFinalFrame } from '../engine/render.ts'
+import type { Frame, Project } from '../engine/types.ts'
 
-const cache = new WeakMap<Frame, { layers: Layer[]; bg: string | null; w: number; h: number; url: string }>()
+const cache = new WeakMap<Frame, { key: string; bg: string | null; url: string }>()
 
-/** Small preview of one frame. Cached per frame object, so only edited frames re-render. */
+/** Small preview of one frame. Cached per frame object and only re-rendered when that frame or the layers it uses change. */
 export function frameThumb(p: Project, f: Frame): string {
+  const key = frameLayersKey(p, f)
   const hit = cache.get(f)
-  if (hit && hit.layers === p.layers && hit.bg === p.background && hit.w === p.width && hit.h === p.height) return hit.url
+  if (hit && hit.key === key && hit.bg === p.background) return hit.url
   let url = ''
   try {
     const canvas = renderFinalFrame(p, f, { scale: Math.min(1, 140 / p.width), transparent: false })
@@ -26,6 +27,6 @@ export function frameThumb(p: Project, f: Frame): string {
   } catch {
     url = ''
   }
-  cache.set(f, { layers: p.layers, bg: p.background, w: p.width, h: p.height, url })
+  cache.set(f, { key, bg: p.background, url })
   return url
 }

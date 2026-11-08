@@ -5,22 +5,34 @@ import { listSnapshots, saveProject, saveSnapshot } from '../engine/storage.ts'
 import { shouldAutoSnapshot } from '../engine/versions.ts'
 import type { Project } from '../engine/types.ts'
 import { store } from './app.ts'
+import { autosaveDelay } from './autosaveDelay.ts'
 import { toast } from './toast.ts'
 
 let lastSeen: Project | null = null
 let timer: number | undefined
 let saving = false
+/** How long the last save took; big projects wait longer between autosaves so drawing stays smooth. */
+let lastSaveMs = 0
 let savedListener: ((id: string) => void) | null = null
 /** Lets other modules (cloud sync) hear about completed saves without persist depending on them. */
 export function setSavedListener(fn: ((id: string) => void) | null) { savedListener = fn }
 
-export function thumbOf(p: Project): string | null {
+let thumbMemo: { at: number; id: string; frame: unknown; layers: unknown; camera: unknown; w: number; h: number; bg: string | null; url: string | null } | null = null
+
+/** Project thumbnail. Re-rendered only when what it shows changed, and routine autosaves may reuse one up to `maxAgeMs` old. */
+export function thumbOf(p: Project, maxAgeMs = 0): string | null {
+  const m = thumbMemo
+  if (m && maxAgeMs > 0 && m.id === p.id && Date.now() - m.at < maxAgeMs) return m.url
+  if (m && m.frame === p.frames[0] && m.layers === p.layers && m.camera === p.camera && m.w === p.width && m.h === p.height && m.bg === p.background) return m.url
+  let url: string | null = null
   try {
     const scale = Math.min(1, 360 / p.width)
-    return renderFinalFrame(p, p.frames[0], { scale, transparent: false }).toDataURL('image/jpeg', 0.8)
+    url = renderFinalFrame(p, p.frames[0], { scale, transparent: false }).toDataURL('image/jpeg', 0.8)
   } catch {
-    return null
+    url = null
   }
+  thumbMemo = { at: Date.now(), id: p.id, frame: p.frames[0], layers: p.layers, camera: p.camera, w: p.width, h: p.height, bg: p.background, url }
+  return url
 }
 
 /** Tell autosave that `p` is already on disk (e.g. just opened). */
@@ -111,9 +123,10 @@ export function saveLocalCopy() {
 let inflight: Promise<boolean> | null = null
 
 /** Saves the open project. If a save is already running, waits for it and then saves anything newer. */
-export async function saveNow(): Promise<boolean> {
+/** `routine` is only for the autosave timer: it may reuse a thumbnail a few seconds old; any other save wants a fresh one. */
+export async function saveNow(routine = false): Promise<boolean> {
   while (inflight) await inflight.catch(() => false)
-  const run = saveOnce()
+  const run = saveOnce(routine)
   inflight = run
   try {
     return await run
@@ -122,14 +135,16 @@ export async function saveNow(): Promise<boolean> {
   }
 }
 
-async function saveOnce(): Promise<boolean> {
+async function saveOnce(routine: boolean): Promise<boolean> {
   const { project } = store.getState()
   if (!project) return false
   window.clearTimeout(timer)
   saving = true
   store.setState({ saveStatus: 'saving' })
   try {
-    await saveProject(project, thumbOf(project))
+    const t0 = performance.now()
+    await saveProject(project, thumbOf(project, routine ? 10000 : 0))
+    lastSaveMs = performance.now() - t0
     lastSeen = project
     const now = store.getState().project
     store.setState({ saveStatus: now === project ? 'saved' : 'dirty' })
@@ -152,7 +167,7 @@ async function saveOnce(): Promise<boolean> {
 
 function schedule() {
   window.clearTimeout(timer)
-  timer = window.setTimeout(() => void saveNow(), 900)
+  timer = window.setTimeout(() => void saveNow(true), autosaveDelay(lastSaveMs))
 }
 
 export function startAutosave() {

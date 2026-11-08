@@ -232,7 +232,17 @@ interface CelEntry {
 
 const celCache = new Map<Stroke[], CelEntry>()
 const lineage = new WeakMap<Stroke[], { parent: Stroke[]; added: Stroke[] }>()
-const MAX_CEL_BYTES = 192 * 1024 * 1024
+/** Phones and low-memory devices get a smaller pixel cache so the browser doesn't thrash or kill the page. */
+function cacheBudget() {
+  try {
+    const nav = navigator as Navigator & { deviceMemory?: number }
+    const small = (nav.deviceMemory !== undefined && nav.deviceMemory <= 4) || (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches)
+    return (small ? 96 : 192) * 1024 * 1024
+  } catch {
+    return 192 * 1024 * 1024
+  }
+}
+const MAX_CEL_BYTES = cacheBudget()
 let celBytes = 0
 
 /**
@@ -288,13 +298,23 @@ export function getCel(strokes: Stroke[], w: number, h: number): HTMLCanvasEleme
 // canvases in memory: only the latest flat per frame is kept.
 const flatCache = new Map<string, { frame: Frame; key: string; canvas: HTMLCanvasElement }>()
 
-function layersKey(project: Project) {
-  return `${project.width}x${project.height}|${project.layers.map((l) => `${l.id}:${l.visible ? 1 : 0}:${l.guide ? 1 : 0}:${l.opacity}:${l.base?.[0]?.id ?? ''}`).join(',')}`
+/**
+ * What decides how one frame looks: the canvas size plus the layers that actually have pixels in this frame
+ * (a layer picture or strokes on that frame). Adding, hiding or reordering an EMPTY layer therefore does not
+ * make every frame re-render, which keeps repeated inserts and layer changes fast on big timelines.
+ */
+export function frameLayersKey(project: Project, frame: Frame): string {
+  let key = `${project.width}x${project.height}`
+  for (const l of project.layers) {
+    if (!l.base?.length && !(frame.cels[l.id]?.length)) continue
+    key += `|${l.id}:${l.visible ? 1 : 0}:${l.guide ? 1 : 0}:${l.opacity}:${l.base?.[0]?.id ?? ''}`
+  }
+  return key
 }
 
 /** All visible layers of a frame flattened onto a transparent canvas. */
 export function flattenFrame(project: Project, frame: Frame, final = false): HTMLCanvasElement {
-  const key = layersKey(project) + (final ? '|final' : '')
+  const key = frameLayersKey(project, frame) + (final ? '|final' : '')
   const cacheId = final ? `${frame.id}:final` : frame.id
   const hit = flatCache.get(cacheId)
   if (hit && hit.frame === frame && hit.key === key) return hit.canvas
@@ -303,9 +323,10 @@ export function flattenFrame(project: Project, frame: Frame, final = false): HTM
   drawLayers(ctx, final ? project.layers.filter((l) => !l.guide) : project.layers, frame, project.width, project.height)
   flatCache.delete(cacheId)
   flatCache.set(cacheId, { frame, key, canvas })
-  if (flatCache.size > 48) {
+  while (flatCache.size > 4 && (flatCache.size > 48 || flatCache.size * project.width * project.height * 4 > MAX_CEL_BYTES)) {
     const oldest = flatCache.keys().next().value
-    if (oldest !== undefined) flatCache.delete(oldest)
+    if (oldest === undefined) break
+    flatCache.delete(oldest)
   }
   return canvas
 }

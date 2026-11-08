@@ -1,13 +1,13 @@
 {
   "name": "brushx",
   "private": true,
-  "version": "0.10.5",
+  "version": "0.10.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "test": "node --experimental-strip-types --test tests/engine.test.ts tests/cloud.test.ts tests/media.test.ts tests/tools.test.ts tests/update.test.ts tests/export.test.ts",
+    "test": "node --experimental-strip-types --test tests/engine.test.ts tests/cloud.test.ts tests/media.test.ts tests/tools.test.ts tests/update.test.ts tests/export.test.ts tests/perf.test.ts",
     "lint": "oxlint",
     "preview": "vite preview",
     "android:sync": "npm run build && npx cap sync android",

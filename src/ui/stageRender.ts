@@ -163,6 +163,17 @@ function drawArtwork(ctx: CanvasRenderingContext2D, st: AppState, project: Proje
       ctx.drawImage(cel, 0, 0)
       continue
     }
+    // Fast path: a plain (non-eraser) live stroke on a fully opaque layer can be painted straight on top of the
+    // layer's pixels, so no full-size scratch copy is needed on every repaint.
+    if (isDraft && !isMove && layer.opacity >= 1 && draft.every((d) => d.tool !== 'eraser')) {
+      const cel = getCel(strokes, w, h)
+      if (cel) ctx.drawImage(cel, 0, 0)
+      ctx.save()
+      ctx.globalAlpha = 1
+      for (const d of draft) renderStroke(ctx, d)
+      ctx.restore()
+      continue
+    }
     const { canvas, ctx: sctx } = getScratch(w, h)
     if (isMove) {
       const base = getCel(session.moveBase as Stroke[], w, h)
